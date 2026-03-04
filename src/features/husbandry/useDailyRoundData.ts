@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { AnimalCategory } from '../../types';
+import { useState, useEffect, useMemo } from 'react';
+import { AnimalCategory, DailyRound } from '../../types';
 import { db } from '../../lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { v4 as uuidv4 } from 'uuid';
 
 interface AnimalCheckState {
     isAlive?: boolean;
@@ -26,7 +27,8 @@ export function useDailyRoundData(viewDate: string) {
 
     useEffect(() => {
         if (liveAnimals !== undefined) {
-            setIsLoading(false);
+            const timer = setTimeout(() => setIsLoading(false), 0);
+            return () => clearTimeout(timer);
         } else {
             const timer = setTimeout(() => setIsLoading(false), 500);
             return () => clearTimeout(timer);
@@ -34,9 +36,12 @@ export function useDailyRoundData(viewDate: string) {
     }, [liveAnimals]);
 
     useEffect(() => {
-        setChecks({});
-        setSigningInitials('');
-        setGeneralNotes('');
+        const timer = setTimeout(() => {
+            setChecks({});
+            setSigningInitials('');
+            setGeneralNotes('');
+        }, 0);
+        return () => clearTimeout(timer);
     }, [viewDate, roundType, activeTab]);
 
     const categoryAnimals = useMemo(() => {
@@ -100,12 +105,32 @@ export function useDailyRoundData(viewDate: string) {
 
     const isPastRound = false;
 
-    const handleSignOff = () => {
+    const handleSignOff = async () => {
+        if (!isComplete || !signingInitials) return;
+        
         setIsSubmitting(true);
-        setTimeout(() => {
+        try {
+            const round: DailyRound = {
+                id: uuidv4(),
+                date: viewDate,
+                shift: roundType,
+                status: 'Completed',
+                completedBy: signingInitials,
+                notes: generalNotes
+            };
+            
+            await db.daily_rounds.add(round);
+            
+            // Also create log entries for each check if needed, 
+            // but for now we just save the round summary for the report.
+            
+            alert('Round signed off successfully!');
+        } catch (error) {
+            console.error('Failed to sign off round:', error);
+            alert('Failed to sign off round. Please try again.');
+        } finally {
             setIsSubmitting(false);
-            alert('Round signed off successfully! (Mock)');
-        }, 1000);
+        }
     };
 
     const currentUser = {

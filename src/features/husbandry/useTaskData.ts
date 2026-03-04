@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../lib/db';
-import { Task, User } from '../../types';
+import { Task, User, UserRole } from '../../types';
 
 const mockUsers: User[] = [
-  { id: 'u1', name: 'John Doe', initials: 'JD', role: 'KEEPER' },
-  { id: 'u2', name: 'Jane Smith', initials: 'JS', role: 'ADMIN' }
+  { id: 'u1', name: 'John Doe', initials: 'JD', role: UserRole.VOLUNTEER },
+  { id: 'u2', name: 'Jane Smith', initials: 'JS', role: UserRole.ADMIN }
 ];
 
 export const useTaskData = () => {

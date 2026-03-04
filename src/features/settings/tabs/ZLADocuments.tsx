@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, Upload, Download, Trash2, X } from 'lucide-react';
 import { useZLADocsData } from '../useZLADocsData';
-import { ZLADocument } from '../../../types';
 
 const ZLADocuments: React.FC = () => {
   const { documents, isLoading, addDocument, deleteDocument } = useZLADocsData();

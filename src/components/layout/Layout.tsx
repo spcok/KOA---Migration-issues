@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   LayoutDashboard, ClipboardList, ListTodo, Map, CloudSun,
-  ArrowLeftRight, ShieldAlert, AlertTriangle, Stethoscope, Heart, Wrench,
+  ArrowLeftRight, ShieldAlert, Stethoscope, Heart, Wrench,
   AlertOctagon, Clock, Settings as SettingsIcon, LogOut, Menu, Power,
   ChevronLeft, ChevronRight,
   HelpCircle, FileText, Calendar, ClipboardCheck, Wifi, WifiOff, ShieldCheck
 } from 'lucide-react';
-import { UserPermissions } from '../../types';
 import { useAuthStore } from '../../store/authStore';
+import { usePermissions } from '../../hooks/usePermissions';
 import { useAppData } from '../../context/AppContext';
 
 interface LayoutProps {
@@ -57,7 +57,14 @@ const SectionHeader = ({ title, isSidebarCollapsed }: { title: string, isSidebar
 };
 
 const Layout: React.FC<LayoutProps> = () => {
-  const { profile: currentUser, signOut } = useAuthStore();
+  const { currentUser, logout } = useAuthStore();
+  const { 
+    view_daily_logs, view_tasks, view_medical, view_movements, 
+    view_daily_rounds, view_maintenance, view_incidents, 
+    view_first_aid, view_safety_drills, view_timesheets, 
+    view_holidays, view_missing_records, generate_reports, 
+    view_settings 
+  } = usePermissions();
   const { activeShift, clockIn, clockOut, orgProfile } = useAppData();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -76,20 +83,8 @@ const Layout: React.FC<LayoutProps> = () => {
   }, []);
 
   const handleLogout = async () => {
-    await signOut();
+    logout();
   }
-
-  const isAdmin = currentUser?.role?.toUpperCase() === 'ADMIN';
-
-  const p: UserPermissions = {
-    dashboard: true, dailyLog: true, tasks: true, medical: isAdmin,
-    movements: isAdmin, safety: isAdmin, maintenance: true, settings: isAdmin,
-    flightRecords: true, feedingSchedule: isAdmin, attendance: true,
-    holidayApprover: isAdmin,
-    attendanceManager: isAdmin, missingRecords: isAdmin,
-    reports: isAdmin, rounds: true,
-    ...(currentUser?.permissions || {})
-  };
 
   const sidebarContent = (
     <div className={`flex flex-col h-full bg-[#1c1c1e] text-slate-300 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'} no-print shadow-xl md:shadow-none`}>
@@ -107,33 +102,33 @@ const Layout: React.FC<LayoutProps> = () => {
       </div>
       <div className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
         <SectionHeader title="Main Menu" isSidebarCollapsed={isSidebarCollapsed} />
-        <NavItem to="/" icon={LayoutDashboard} label="Dashboard" permission={p.dashboard} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/" icon={LayoutDashboard} label="Dashboard" permission={true} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
         <NavItem to="/weather" icon={CloudSun} label="Weather" permission={true} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/daily-log" icon={ClipboardList} label="Daily Log" permission={p.dailyLog} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/tasks" icon={ListTodo} label="To-Do List" permission={p.tasks} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/daily-log" icon={ClipboardList} label="Daily Log" permission={view_daily_logs} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/tasks" icon={ListTodo} label="To-Do List" permission={view_tasks} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
         <SectionHeader title="Animal Care" isSidebarCollapsed={isSidebarCollapsed} />
-        <NavItem to="/medical" icon={Stethoscope} label="Medical Records" permission={p.medical} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/movements" icon={ArrowLeftRight} label="Movements" permission={p.movements} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/flight-records" icon={Map} label="Flight Records" permission={p.flightRecords} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/daily-rounds" icon={ClipboardCheck} label="Daily Rounds" permission={p.rounds} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/medical" icon={Stethoscope} label="Medical Records" permission={view_medical} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/movements" icon={ArrowLeftRight} label="Movements" permission={view_movements} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/flight-records" icon={Map} label="Flight Records" permission={true} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/daily-rounds" icon={ClipboardCheck} label="Daily Rounds" permission={view_daily_rounds} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
         <SectionHeader title="Site & Safety" isSidebarCollapsed={isSidebarCollapsed} />
-        <NavItem to="/maintenance" icon={Wrench} label="Site Maintenance" permission={p.maintenance} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/incidents" icon={ShieldAlert} label="Incident Reports" permission={p.safety} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/first-aid" icon={Heart} label="First Aid Log" permission={p.safety} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/safety-drills" icon={AlertOctagon} label="Safety Drills" permission={p.safety} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/maintenance" icon={Wrench} label="Site Maintenance" permission={view_maintenance} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/incidents" icon={ShieldAlert} label="Incident Reports" permission={view_incidents} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/first-aid" icon={Heart} label="First Aid Log" permission={view_first_aid} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/safety-drills" icon={AlertOctagon} label="Safety Drills" permission={view_safety_drills} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
         <SectionHeader title="Staff" isSidebarCollapsed={isSidebarCollapsed} />
-        <NavItem to="/timesheets" icon={Clock} label="Time Sheets" permission={p.attendance} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/holidays" icon={Calendar} label="Holiday Registry" permission={p.attendance} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/timesheets" icon={Clock} label="Time Sheets" permission={view_timesheets} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/holidays" icon={Calendar} label="Holiday Registry" permission={view_holidays} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
         <SectionHeader title="Compliance" isSidebarCollapsed={isSidebarCollapsed} />
-        <NavItem to="/compliance" icon={ShieldCheck} label="ZLA Compliance" permission={p.missingRecords} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
-        <NavItem to="/reports" icon={FileText} label="Reports" permission={p.reports} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/compliance" icon={ShieldCheck} label="ZLA Compliance" permission={view_missing_records} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/reports" icon={FileText} label="Reports" permission={generate_reports} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 
         <SectionHeader title="System" isSidebarCollapsed={isSidebarCollapsed} />
-        <NavItem to="/settings" icon={SettingsIcon} label="Settings" permission={p.settings} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        <NavItem to="/settings" icon={SettingsIcon} label="Settings" permission={view_settings} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
         <NavItem to="/help" icon={HelpCircle} label="Help & Support" permission={true} isSidebarCollapsed={isSidebarCollapsed} setIsMobileMenuOpen={setIsMobileMenuOpen} />
       </div>
       <div className="p-4 border-t border-slate-800/50 bg-[#18181a]">

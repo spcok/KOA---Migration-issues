@@ -4,13 +4,17 @@ import { useMaintenanceData } from '../useMaintenanceData';
 import { MaintenanceLog } from '../../../types';
 import { useAppData } from '../../../context/AppContext';
 
+import { usePermissions } from '../../../hooks/usePermissions';
+import { Wrench, Plus, X, AlertCircle, CheckCircle2, Clock, MapPin, Search, Trash2, Edit2, History, Lock } from 'lucide-react';
+
 const SiteMaintenance: React.FC = () => {
+  const { view_maintenance } = usePermissions();
   const { logs, isLoading, addLog, updateLog, deleteLog } = useMaintenanceData();
   const { users } = useAppData();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<MaintenanceLog | null>(null);
-  
+
   const [formTitle, setFormTitle] = useState('');
   const [formDesc, setFormDesc] = useState('');
   const [formLoc, setFormLoc] = useState('');
@@ -18,6 +22,18 @@ const SiteMaintenance: React.FC = () => {
   const [formStatus, setFormStatus] = useState<'Pending' | 'In Progress' | 'Resolved'>('Pending');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'Pending' | 'In Progress' | 'Resolved'>('ALL');
+
+  if (!view_maintenance) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view Site Maintenance. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   const filteredLogs = useMemo(() => {
     return logs.filter(log => {

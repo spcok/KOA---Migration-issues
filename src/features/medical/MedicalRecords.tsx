@@ -1,17 +1,31 @@
 import React, { useState } from 'react';
 import { useMedicalData } from './useMedicalData';
-import { Pill, ClipboardList, AlertTriangle, Plus, Edit2, Download, CheckCircle } from 'lucide-react';
+import { usePermissions } from '../../hooks/usePermissions';
+import { Pill, ClipboardList, AlertTriangle, Plus, Edit2, Download, CheckCircle, Lock } from 'lucide-react';
 import { AddClinicalNoteModal } from './AddClinicalNoteModal';
 import { AddMarChartModal } from './AddMarChartModal';
 import { AddQuarantineModal } from './AddQuarantineModal';
 import { generateMarChartDocx } from './exportMarChart';
 
 const MedicalRecords: React.FC = () => {
+  const { view_medical, edit_medical } = usePermissions();
   const { clinicalNotes, marCharts, quarantineRecords, animals, isLoading, addClinicalNote, addMarChart, signOffDose, addQuarantineRecord, updateQuarantineRecord } = useMedicalData();
   const [activeTab, setActiveTab] = useState<'notes' | 'mar' | 'quarantine'>('notes');
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [isMarModalOpen, setIsMarModalOpen] = useState(false);
   const [isQuarantineModalOpen, setIsQuarantineModalOpen] = useState(false);
+
+  if (!view_medical) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view Medical Records. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) return <div className="p-8 text-center text-slate-500">Loading Clinical Records...</div>;
 
@@ -25,12 +39,14 @@ const MedicalRecords: React.FC = () => {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-slate-900">Clinical Records</h1>
-        <button 
-          onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 shadow-sm"
-        >
-          <Plus size={16} /> Add {activeTab === 'notes' ? 'Note' : activeTab === 'mar' ? 'Medication' : 'Record'}
-        </button>
+        {edit_medical && (
+          <button 
+            onClick={handleAdd}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 shadow-sm"
+          >
+            <Plus size={16} /> Add {activeTab === 'notes' ? 'Note' : activeTab === 'mar' ? 'Medication' : 'Record'}
+          </button>
+        )}
       </div>
       
       <AddClinicalNoteModal 

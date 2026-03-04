@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Animal, LogEntry, Task } from '../../types';
 import { db } from '../../lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -12,7 +11,8 @@ export function useAnimalProfileData(animalId: string) {
 
   useEffect(() => {
     if (animal !== undefined && logs !== undefined && tasks !== undefined) {
-      setIsLoading(false);
+      const timer = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(timer);
     }
   }, [animal, logs, tasks]);
 

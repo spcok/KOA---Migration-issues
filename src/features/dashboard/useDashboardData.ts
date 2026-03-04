@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Animal, AnimalCategory, HazardRating, LogType } from '../../types';
+import { Animal, AnimalCategory, LogType } from '../../types';
 import { db } from '../../lib/db';
 import { useTaskData } from '../husbandry/useTaskData';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -55,7 +55,8 @@ export function useDashboardData(activeTab: AnimalCategory, viewDate: string) {
 
   useEffect(() => {
     if (liveAnimals) {
-      setIsLoading(false);
+      const timer = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(timer);
     }
   }, [liveAnimals]);
 
@@ -68,7 +69,8 @@ export function useDashboardData(activeTab: AnimalCategory, viewDate: string) {
       .filter(t => !t.completed && t.type === 'HEALTH')
       .map(t => ({ id: t.id, title: t.title, due_date: t.dueDate }));
 
-    setTaskStats({ pendingTasks, pendingHealth });
+    const timer = setTimeout(() => setTaskStats({ pendingTasks, pendingHealth }), 0);
+    return () => clearTimeout(timer);
   }, [tasks]);
 
   useEffect(() => {
@@ -93,7 +95,8 @@ export function useDashboardData(activeTab: AnimalCategory, viewDate: string) {
       result.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
     }
     
-    setFilteredAnimals(result);
+    const timer = setTimeout(() => setFilteredAnimals(result), 0);
+    return () => clearTimeout(timer);
   }, [liveAnimals, activeTab, searchTerm, sortOption]);
 
   const toggleOrderLock = (locked: boolean) => setIsOrderLocked(locked);

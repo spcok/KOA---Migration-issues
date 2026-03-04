@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Stethoscope, Plus, MapPin, Clock, X, Trash2, Loader2, Search } from 'lucide-react';
-import { useFirstAidData } from '../useFirstAidData';
-import { FirstAidLog } from '../../../types';
+import { usePermissions } from '../../../hooks/usePermissions';
+import { Stethoscope, Plus, MapPin, Clock, X, Trash2, Loader2, Search, Lock } from 'lucide-react';
 
 const FirstAid: React.FC = () => {
+  const { view_first_aid } = usePermissions();
   const { logs, isLoading, addFirstAid, deleteFirstAid } = useFirstAidData();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -17,6 +17,18 @@ const FirstAid: React.FC = () => {
   const [description, setDescription] = useState('');
   const [treatment, setTreatment] = useState('');
   const [outcome, setOutcome] = useState<FirstAidLog['outcome']>('Returned to Work');
+
+  if (!view_first_aid) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view First Aid Log. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   const filteredLogs = useMemo(() => {
     return logs.filter(log => 

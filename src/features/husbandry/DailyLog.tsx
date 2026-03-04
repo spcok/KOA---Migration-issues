@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { AnimalCategory, LogType, LogEntry } from '../../types';
-import { ClipboardList, Check, Droplets, ChevronLeft, ChevronRight, Thermometer, Scale, Utensils, Loader2, Search, Filter, Activity } from 'lucide-react';
+import { ClipboardList, Check, Droplets, ChevronLeft, ChevronRight, Thermometer, Scale, Utensils, Loader2, Search, Filter, Activity, Lock } from 'lucide-react';
 import { formatWeightDisplay } from '../../services/weightUtils';
 import AddEntryModal from './AddEntryModal';
 import { useDailyLogData } from './useDailyLogData';
 import { useAppData } from '../../context/AppContext';
+import { usePermissions } from '../../hooks/usePermissions';
 
 interface DailyLogProps {
   // Add props here if needed in the future
 }
 
 const DailyLog: React.FC<DailyLogProps> = () => {
+  const { view_daily_logs } = usePermissions();
   const [activeCategory, setActiveCategory] = useState<AnimalCategory>(AnimalCategory.ALL);
   const [viewDate, setViewDate] = useState(new Date().toISOString().split('T')[0]);
 
@@ -31,6 +33,18 @@ const DailyLog: React.FC<DailyLogProps> = () => {
   const [logType, setLogType] = useState<LogType>(LogType.WEIGHT);
   const [editingLog, setEditingLog] = useState<LogEntry | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
+
+  if (!view_daily_logs) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view the Daily Logs. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

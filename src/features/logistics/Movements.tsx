@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
-import { Truck, Plus, History, MapPin, Calendar, User as UserIcon, ArrowRight, Plane } from 'lucide-react';
+import { Truck, Plus, History, MapPin, Calendar, User as UserIcon, ArrowRight, Plane, Lock } from 'lucide-react';
 import { useMovementsData } from './useMovementsData';
 import { useTransfersData } from './useTransfersData';
 import AddMovementModal from './AddMovementModal';
 import AddTransferModal from './AddTransferModal';
+import { usePermissions } from '../../hooks/usePermissions';
 
 export default function Movements() {
+  const { view_movements } = usePermissions();
   const { movements } = useMovementsData();
   const { transfers } = useTransfersData();
   const [activeTab, setActiveTab] = useState<'internal' | 'external'>('internal');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (!view_movements) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view Logistics & Movements. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6">

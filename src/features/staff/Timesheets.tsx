@@ -1,12 +1,26 @@
 import React, { useState } from 'react';
-import { Clock, Plus, Calendar, Trash2 } from 'lucide-react';
+import { Clock, Plus, Calendar, Trash2, Lock } from 'lucide-react';
 import { useTimesheetData } from './useTimesheetData';
 import AddTimesheetModal from './AddTimesheetModal';
 import { TimesheetStatus } from '@/src/types';
+import { usePermissions } from '../../hooks/usePermissions';
 
 export default function Timesheets() {
+  const { view_timesheets } = usePermissions();
   const { timesheets, deleteTimesheet } = useTimesheetData();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (!view_timesheets) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view Staff Timesheets. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6">

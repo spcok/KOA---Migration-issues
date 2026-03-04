@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { ShieldAlert, Plus, Clock, Users, Timer, X, Trash2, UserCheck, Check, Loader2, Search, Siren } from 'lucide-react';
-import { useSafetyDrillData } from '../useSafetyDrillData';
-import { useAppData } from '../../../context/AppContext';
-import { SafetyDrill } from '../../../types';
+import { usePermissions } from '../../../hooks/usePermissions';
+import { ShieldAlert, Plus, Clock, Users, Timer, X, Trash2, UserCheck, Check, Loader2, Search, Siren, Lock } from 'lucide-react';
 
 const SafetyDrills: React.FC = () => {
+  const { view_safety_drills } = usePermissions();
   const { drills, isLoading, addDrillLog, deleteDrillLog } = useSafetyDrillData();
+
   const { users } = useAppData(); // Assuming users are available in AppContext
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +19,18 @@ const SafetyDrills: React.FC = () => {
   const [verifiedUserIds, setVerifiedUserIds] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('ALL');
+
+  if (!view_safety_drills) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view Safety Drills. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   const filteredDrills = useMemo(() => {
     return drills.filter(drill => {

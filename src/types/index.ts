@@ -28,8 +28,11 @@ export enum HazardRating {
 }
 
 export enum UserRole {
+  VOLUNTEER = 'VOLUNTEER',
+  KEEPER = 'KEEPER',
+  SENIOR_KEEPER = 'SENIOR_KEEPER',
   ADMIN = 'ADMIN',
-  KEEPER = 'KEEPER'
+  OWNER = 'OWNER'
 }
 
 export enum HealthRecordType {
@@ -192,10 +195,40 @@ export interface UserPermissions {
 export interface UserProfile {
   id: string;
   name: string;
-  role: string;
+  role: UserRole;
   initials: string;
   job_position?: string;
   permissions?: Partial<UserPermissions>;
+}
+
+export interface RolePermissionConfig {
+  role: UserRole;
+  // Animals
+  view_animals: boolean;
+  edit_animals: boolean;
+  // Husbandry
+  view_daily_logs: boolean;
+  view_tasks: boolean;
+  view_daily_rounds: boolean;
+  // Medical
+  view_medical: boolean;
+  edit_medical: boolean;
+  // Logistics
+  view_movements: boolean;
+  // Safety (HSE)
+  view_incidents: boolean;
+  view_maintenance: boolean;
+  view_safety_drills: boolean;
+  view_first_aid: boolean;
+  // Staff Management
+  view_timesheets: boolean;
+  view_holidays: boolean;
+  // Compliance
+  view_missing_records: boolean;
+  generate_reports: boolean;
+  // Admin
+  view_settings: boolean;
+  manage_access_control: boolean;
 }
 
 export type User = UserProfile;
@@ -360,6 +393,15 @@ export enum IncidentSeverity {
   MEDIUM = 'Medium',
   HIGH = 'High',
   CRITICAL = 'Critical'
+}
+
+export interface DailyRound {
+  id: string;
+  date: string;
+  shift: 'Morning' | 'Evening';
+  status: 'Completed' | 'Pending';
+  completedBy: string;
+  notes?: string;
 }
 
 export interface Incident {

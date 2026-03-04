@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } from 'docx';
+import { Document, Packer, Paragraph, Table, TableRow, TableCell, WidthType } from 'docx';
 import { saveAs } from 'file-saver';
 import { MARChart } from '../../types';
 

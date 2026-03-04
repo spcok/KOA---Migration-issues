@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { IncidentType, IncidentSeverity } from '../../../types';
-import { ShieldAlert, Plus, Clock, X, AlertTriangle, MapPin, Trash2, Loader2, Search } from 'lucide-react';
-import { useIncidentData } from '../useIncidentData';
+import { usePermissions } from '../../../hooks/usePermissions';
+import { ShieldAlert, Plus, Clock, X, AlertTriangle, MapPin, Trash2, Loader2, Search, Lock } from 'lucide-react';
 
 const Incidents: React.FC = () => {
+  const { view_incidents } = usePermissions();
   const { 
     incidents, 
     isLoading, 
@@ -14,7 +15,7 @@ const Incidents: React.FC = () => {
     addIncident, 
     deleteIncident 
   } = useIncidentData();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -22,6 +23,18 @@ const Incidents: React.FC = () => {
   const [severity, setSeverity] = useState<IncidentSeverity>(IncidentSeverity.MEDIUM);
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+
+  if (!view_incidents) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view Incident Reports. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

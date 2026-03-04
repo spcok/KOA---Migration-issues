@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import { AppProvider } from './context/AppContext';
+import { useAuthStore } from './store/authStore';
 import DashboardContainer from './features/dashboard/DashboardContainer';
 import WeatherView from './features/dashboard/WeatherView';
 import Tasks from './features/husbandry/Tasks';
@@ -17,6 +19,7 @@ import Incidents from './features/safety/tabs/Incidents';
 import FirstAidLog from './features/safety/tabs/FirstAid';
 import SafetyDrills from './features/safety/tabs/SafetyDrills';
 import SiteMaintenance from './features/safety/tabs/SiteMaintenance';
+import ReportsDashboard from './features/reports/ReportsDashboard';
 
 const Placeholder = ({ title, phase }: { title: string, phase: string }) => (
   <div className="p-8">
@@ -29,6 +32,23 @@ const Placeholder = ({ title, phase }: { title: string, phase: string }) => (
 );
 
 export default function App() {
+  const { initialize, isLoading } = useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-emerald-500 font-black uppercase tracking-widest text-xs">Authenticating...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AppProvider>
       <BrowserRouter>
@@ -56,7 +76,7 @@ export default function App() {
             <Route path="timesheets" element={<Timesheets />} />
             <Route path="holidays" element={<Holidays />} />
             <Route path="compliance" element={<MissingRecords />} />
-            <Route path="reports" element={<Placeholder title="Reports" phase="Phase 6: Compliance" />} />
+            <Route path="reports" element={<ReportsDashboard />} />
             <Route path="missing-records" element={<MissingRecords />} />
 
             {/* PHASE 7: SETTINGS */}

@@ -10,7 +10,10 @@ const MissingRecords: React.FC = () => {
   const detailsAlerts = alerts.filter(a => a.category === 'Details');
   const healthAlerts = alerts.filter(a => a.category === 'Health');
 
-  const initialStartDate = useMemo(() => new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), []);
+  const initialStartDate = useMemo(() => {
+    const now = new Date();
+    return new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+  }, []);
   const [startDate, setStartDate] = useState(initialStartDate);
 
   const renderHusbandry = () => (

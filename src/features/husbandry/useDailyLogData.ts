@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Animal, AnimalCategory, LogType, LogEntry } from '../../types';
+import { AnimalCategory, LogType, LogEntry } from '../../types';
 import { db } from '../../lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -19,7 +19,8 @@ export const useDailyLogData = (viewDate: string, activeCategory: AnimalCategory
 
   useEffect(() => {
     if (liveAnimals !== undefined && liveLogs !== undefined) {
-      setIsLoading(false);
+      const timer = setTimeout(() => setIsLoading(false), 0);
+      return () => clearTimeout(timer);
     }
   }, [liveAnimals, liveLogs]);
 

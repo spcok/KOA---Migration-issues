@@ -22,7 +22,7 @@ interface AnimalProfileProps {
 }
 
 const AnimalProfile: React.FC<AnimalProfileProps> = ({ animalId, onBack }) => {
-  const { isStaff } = usePermissions();
+  const { canEditAnimals, canEditMedical } = usePermissions();
   
   const {
     animal,
@@ -126,10 +126,12 @@ const AnimalProfile: React.FC<AnimalProfileProps> = ({ animalId, onBack }) => {
                     <button onClick={() => setIsSignGeneratorOpen(true)} className="flex-1 md:flex-none p-3 text-slate-500 hover:text-slate-900 bg-white border border-slate-200 rounded-xl shadow-sm transition-all hover:shadow-md" title="Signage">
                         <Printer size={18} />
                     </button>
-                    <button onClick={() => setIsEditProfileOpen(true)} className="flex-1 md:flex-none p-3 text-slate-500 hover:text-emerald-600 bg-white border border-slate-200 rounded-xl shadow-sm transition-all hover:shadow-md" title="Edit Profile">
-                        <Edit size={18} />
-                    </button>
-                    {isStaff && (
+                    {canEditAnimals && (
+                        <button onClick={() => setIsEditProfileOpen(true)} className="flex-1 md:flex-none p-3 text-slate-500 hover:text-emerald-600 bg-white border border-slate-200 rounded-xl shadow-sm transition-all hover:shadow-md" title="Edit Profile">
+                            <Edit size={18} />
+                        </button>
+                    )}
+                    {canEditAnimals && (
                         <button onClick={() => setIsArchiveModalOpen(true)} className="flex-1 md:flex-none p-3 text-slate-500 hover:text-rose-600 bg-white border border-slate-200 rounded-xl shadow-sm transition-all hover:shadow-md" title="Archive">
                             <Archive size={18} />
                         </button>
@@ -417,12 +419,14 @@ const AnimalProfile: React.FC<AnimalProfileProps> = ({ animalId, onBack }) => {
                         <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest">Clinical Patient File</h3>
-                                <button 
-                                    onClick={() => { setEntryType(LogType.HEALTH); setIsAddEntryOpen(true); }}
-                                    className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-xl shadow-lg shadow-rose-900/10 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95"
-                                >
-                                    <Plus size={16} strokeWidth={3} /> Add Clinical Record
-                                </button>
+                                {canEditMedical && (
+                                    <button 
+                                        onClick={() => { setEntryType(LogType.HEALTH); setIsAddEntryOpen(true); }}
+                                        className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-xl shadow-lg shadow-rose-900/10 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95"
+                                    >
+                                        <Plus size={16} strokeWidth={3} /> Add Clinical Record
+                                    </button>
+                                )}
                             </div>
 
                             <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">

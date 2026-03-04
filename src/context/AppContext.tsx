@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { AnimalCategory, OrgProfile, User } from '../types';
+import { AnimalCategory, OrgProfile, User, UserRole } from '../types';
 
 interface AppContextType {
   foodOptions: string[];
@@ -32,8 +32,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       logo_url: 'https://picsum.photos/seed/koa/200/200',
     },
     users: [
-      { id: '1', name: 'John Doe', role: 'Admin', initials: 'JD' },
-      { id: '2', name: 'Jane Smith', role: 'Keeper', initials: 'JS' }
+      { id: '1', name: 'John Doe', role: UserRole.ADMIN, initials: 'JD' },
+      { id: '2', name: 'Jane Smith', role: UserRole.VOLUNTEER, initials: 'JS' }
     ]
   };
 

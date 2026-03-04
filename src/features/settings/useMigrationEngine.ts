@@ -139,7 +139,8 @@ export const useMigrationEngine = () => {
         if (Array.isArray(legacyAnimal.logs)) {
           legacyAnimal.logs.forEach(legacyLog => {
             const newLogId = uuidv4();
-            const logDate = legacyLog.date || new Date().toISOString();
+            const rawDate = legacyLog.date || new Date().toISOString();
+            const logDate = rawDate.split('T')[0]; // Strips time and standardizes to YYYY-MM-DD
             const userInitials = legacyLog.user || 'SYS';
             const logTypeUpper = (legacyLog.type || '').toUpperCase();
 
@@ -202,9 +203,9 @@ export const useMigrationEngine = () => {
       });
 
       // Bulk Transaction
-      await db.transaction('rw', db.animals, db.logEntries, db.internal_movements, db.medical_logs, async () => {
+      await db.transaction('rw', db.animals, db.daily_logs, db.internal_movements, db.medical_logs, async () => {
         await db.animals.bulkAdd(animalsToImport);
-        await db.logEntries.bulkAdd(logsToImport);
+        await db.daily_logs.bulkAdd(logsToImport);
         await db.internal_movements.bulkAdd(movementsToImport);
         await db.medical_logs.bulkAdd(medicalToImport);
       });

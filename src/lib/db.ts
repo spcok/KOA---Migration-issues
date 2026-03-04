@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { Animal, LogEntry, Task, ClinicalNote, MARChart, QuarantineRecord, InternalMovement, ExternalTransfer, Timesheet, Holiday, User, OrgProfileSettings, Contact, ZLADocument, SafetyDrill, MaintenanceLog, FirstAidLog, Incident } from '../types';
+import { Animal, LogEntry, Task, ClinicalNote, MARChart, QuarantineRecord, InternalMovement, ExternalTransfer, Timesheet, Holiday, User, OrgProfileSettings, Contact, ZLADocument, SafetyDrill, MaintenanceLog, FirstAidLog, Incident, DailyRound, RolePermissionConfig } from '../types';
 
 export class AppDatabase extends Dexie {
   animals!: Table<Animal, string>;
@@ -14,6 +14,7 @@ export class AppDatabase extends Dexie {
   timesheets!: Table<Timesheet, string>;
   holidays!: Table<Holiday, string>;
   users!: Table<User, string>;
+  role_permissions!: Table<RolePermissionConfig, string>;
   settings!: Table<OrgProfileSettings, string>;
   contacts!: Table<Contact, string>;
   zla_documents!: Table<ZLADocument, string>;
@@ -21,10 +22,11 @@ export class AppDatabase extends Dexie {
   maintenance_logs!: Table<MaintenanceLog, string>;
   first_aid_logs!: Table<FirstAidLog, string>;
   incidents!: Table<Incident, string>;
+  daily_rounds!: Table<DailyRound, string>;
 
   constructor() {
     super('KentOwlAcademyDB');
-    this.version(12).stores({
+    this.version(14).stores({
       animals: 'id, name, species, category, location',
       logEntries: 'id, animal_id, log_type, log_date',
       daily_logs: 'id, animal_id, log_type, log_date',
@@ -37,13 +39,15 @@ export class AppDatabase extends Dexie {
       timesheets: 'id, staff_name, date, status',
       holidays: 'id, staff_name, status',
       users: 'id, name, role',
+      role_permissions: 'role, view_animals, edit_animals, view_daily_logs, view_tasks, view_daily_rounds, view_medical, edit_medical, view_movements, view_incidents, view_maintenance, view_safety_drills, view_first_aid, view_timesheets, view_holidays, view_missing_records, generate_reports, view_settings, manage_access_control',
       settings: 'id',
       contacts: 'id, name, role',
       zla_documents: 'id, name, category',
       safety_drills: 'id, date, title',
       maintenance_logs: 'id, title, status, priority',
       first_aid_logs: 'id, date, personName, type',
-      incidents: 'id, date, severity'
+      incidents: 'id, date, severity',
+      daily_rounds: 'id, date, shift, status'
     });
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Search, Mail, Phone, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import { BookOpen, Search, Mail, Phone, ChevronDown, ChevronUp } from 'lucide-react';
 
 const guides = [
   {

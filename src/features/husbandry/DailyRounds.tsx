@@ -7,9 +7,14 @@ import {
 } from 'lucide-react';
 import { useDailyRoundData } from './useDailyRoundData';
 
-interface DailyRoundsProps {}
+interface DailyRoundsProps {
+    [key: string]: any;
+}
+
+import { usePermissions } from '../../hooks/usePermissions';
 
 const DailyRounds: React.FC<DailyRoundsProps> = () => {
+    const { view_daily_rounds } = usePermissions();
     const [viewDate, setViewDate] = useState(new Date().toISOString().split('T')[0]);
 
     const {
@@ -60,6 +65,18 @@ const DailyRounds: React.FC<DailyRoundsProps> = () => {
         setReportModalOpen(false);
         setReportAnimalId(null);
     };
+
+    if (!view_daily_rounds) {
+        return (
+            <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+                <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+                    <Lock size={48} className="opacity-50" />
+                    <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+                    <p className="text-sm font-medium">You do not have permission to view the Daily Rounds. Please contact your administrator.</p>
+                </div>
+            </div>
+        );
+    }
 
     if (isLoading) {
         return (
@@ -156,8 +173,8 @@ const DailyRounds: React.FC<DailyRoundsProps> = () => {
                                         disabled={state.isAlive === false || isPastRound} 
                                         className={`flex flex-col items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl border-2 transition-all ${state.isSecure ? 'border-emerald-100 bg-emerald-50 text-emerald-600' : (state.securityIssue ? 'border-rose-200 bg-rose-100 text-rose-600' : 'border-slate-100 bg-slate-50 text-slate-300')} disabled:opacity-50 active:scale-95`}
                                     >
-                                        {state.isSecure ? <Check size={24} className="md:w-7 md:h-7" strokeWidth={4} /> : (!!state.securityIssue ? <X size={24} className="md:w-7 md:h-7" strokeWidth={4} /> : <Lock size={20} className="md:w-6 md:h-6"/>)}
-                                        <span className="text-[8px] font-black uppercase mt-1 hidden md:block">{state.isSecure ? 'Safe' : (!!state.securityIssue ? 'Risk' : 'Secure')}</span>
+                                        {state.isSecure ? <Check size={24} className="md:w-7 md:h-7" strokeWidth={4} /> : (state.securityIssue ? <X size={24} className="md:w-7 md:h-7" strokeWidth={4} /> : <Lock size={20} className="md:w-6 md:h-6"/>)}
+                                        <span className="text-[8px] font-black uppercase mt-1 hidden md:block">{state.isSecure ? 'Safe' : (state.securityIssue ? 'Risk' : 'Secure')}</span>
                                     </button>
                                 </div>
                             </div>

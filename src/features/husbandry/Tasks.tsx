@@ -8,7 +8,11 @@ import AddEntryModal from './AddEntryModal';
 import { useTaskData } from './useTaskData';
 import { useAppData } from '../../context/AppContext';
 
+import { usePermissions } from '../../hooks/usePermissions';
+import { Lock } from 'lucide-react';
+
 const Tasks: React.FC = () => {
+  const { view_tasks } = usePermissions();
   const { 
     tasks, animals, users, isLoading, filter, setFilter, 
     searchTerm, setSearchTerm, addTask, toggleTaskCompletion, currentUser 
@@ -27,6 +31,18 @@ const Tasks: React.FC = () => {
   const [newAnimalId, setNewAnimalId] = useState('');
   const [newDueDate, setNewDueDate] = useState(new Date().toISOString().split('T')[0]);
   const [newAssignedTo, setNewAssignedTo] = useState(currentUser?.id || '');
+
+  if (!view_tasks) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center h-full min-h-[50vh] space-y-4">
+        <div className="p-4 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100 flex flex-col items-center gap-2 max-w-md text-center">
+          <Lock size={48} className="opacity-50" />
+          <h2 className="text-lg font-bold uppercase tracking-tight">Access Restricted</h2>
+          <p className="text-sm font-medium">You do not have permission to view the Duty Rota. Please contact your administrator.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

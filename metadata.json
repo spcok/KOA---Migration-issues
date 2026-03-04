@@ -1,0 +1,5 @@
+{
+  "name": "Remix: Remix: Kent Owl Academy V2 - Migration - Husbandry Log -  fix",
+  "description": "Clean room transplant of the Kent Owl Academy Management System (V2) with mocked auth and local-first architecture.",
+  "requestFramePermissions": []
+}

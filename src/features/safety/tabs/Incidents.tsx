@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IncidentType, IncidentSeverity } from '../../../types';
 import { usePermissions } from '../../../hooks/usePermissions';
+import { useIncidentData } from '../useIncidentData';
 import { ShieldAlert, Plus, Clock, X, AlertTriangle, MapPin, Trash2, Loader2, Search, Lock } from 'lucide-react';
 
 const Incidents: React.FC = () => {

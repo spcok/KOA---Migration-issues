@@ -57,9 +57,9 @@ const MissingRecords: React.FC = () => {
             <div className="grid grid-cols-7 gap-2 mb-4">
               {status.weights.map((hasWeight, i) => {
                 const hasFeed = status.feeds[i];
-                const isMissing = !hasWeight || !hasFeed;
+                const isMissing = !hasWeight && !hasFeed;
                 return (
-                  <div key={`d-${i}`} className={`h-10 rounded-lg ${isMissing ? 'bg-red-100' : 'bg-emerald-100'}`} title={`Day ${i+1}: ${isMissing ? 'Logs missing' : 'All logs present'}`} />
+                  <div key={`d-${i}`} className={`h-10 rounded-lg ${isMissing ? 'bg-red-100' : 'bg-emerald-100'}`} title={`Day ${i+1}: ${isMissing ? 'Logs missing' : 'Logs present'}`} />
                 );
               })}
             </div>

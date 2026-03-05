@@ -1,11 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Wrench, Plus, X, AlertCircle, CheckCircle2, Clock, MapPin, Search, Trash2, Edit2, History } from 'lucide-react';
+import { Wrench, Plus, X, AlertCircle, CheckCircle2, Clock, MapPin, Search, Trash2, Edit2, History, Lock } from 'lucide-react';
 import { useMaintenanceData } from '../useMaintenanceData';
 import { MaintenanceLog } from '../../../types';
 import { useAppData } from '../../../context/AppContext';
-
 import { usePermissions } from '../../../hooks/usePermissions';
-import { Wrench, Plus, X, AlertCircle, CheckCircle2, Clock, MapPin, Search, Trash2, Edit2, History, Lock } from 'lucide-react';
 
 const SiteMaintenance: React.FC = () => {
   const { view_maintenance } = usePermissions();

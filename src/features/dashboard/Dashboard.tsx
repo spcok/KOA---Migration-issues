@@ -4,6 +4,7 @@ import { Heart, AlertCircle, Plus, Calendar, Scale, Drumstick, ArrowUpDown, Load
 import { formatWeightDisplay } from '../../services/weightUtils';
 import AnimalFormModal from '../animals/AnimalFormModal';
 import { useDashboardData } from './useDashboardData';
+import { usePermissions } from '../../hooks/usePermissions';
 
 interface DashboardProps {
   onSelectAnimal: (animal: Animal) => void;

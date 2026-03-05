@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { usePermissions } from '../../../hooks/usePermissions';
+import { useFirstAidData } from '../useFirstAidData';
+import { FirstAidLog } from '../../../types';
 import { Stethoscope, Plus, MapPin, Clock, X, Trash2, Loader2, Search, Lock } from 'lucide-react';
 
 const FirstAid: React.FC = () => {
